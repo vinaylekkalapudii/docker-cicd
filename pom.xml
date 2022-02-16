@@ -58,6 +58,7 @@
             <version>2.19</version>
         </plugin>
     </plugins>
+   <finalName>myweb</finalName>
 </build>
 	
 </project>
