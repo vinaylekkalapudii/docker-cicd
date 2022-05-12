@@ -4,11 +4,11 @@ pipeline {
         maven 'maven3'
     }
     stages {
-        stage("Git clone") {
-            steps {
-                git credentialsId: 'git_cred', url: 'https://github.com/amiyaranjansahoo/training-mvn.git'
-            }
-        }
+        //stage("Git clone") {
+            //steps {
+             //   git credentialsId: 'git_cred', url: 'https://github.com/amiyaranjansahoo/training-mvn.git'
+            //}
+        //}
         
         stage("Build the source code using maven") {
             steps {
