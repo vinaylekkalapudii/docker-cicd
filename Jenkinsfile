@@ -1,4 +1,4 @@
-@('sharedlib') _
+@('sharedlib')_
 pipeline {
     agent any
     tools {
