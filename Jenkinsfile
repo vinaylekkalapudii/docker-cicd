@@ -18,7 +18,7 @@ pipeline {
         
         stage("SCP the artifcat and deploy to tomcat") {
             steps {
-                deployTomcat('tomcat','ec2-user','172.31.37.225') 
+                deployTomcat(tomcat,ec2-user,172.31.37.225) 
             }
         }
     }
