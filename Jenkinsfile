@@ -12,7 +12,7 @@ pipeline {
 		
 		stage('Docker Build image') {
 			steps {
-				echo "Code for Build the docker image"
+				sh 'docker build -t amiyaranjansahoo/dockerimg .'
 			}
 		}
 		
