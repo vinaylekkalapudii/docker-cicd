@@ -19,7 +19,7 @@ pipeline {
 		stage('Push to docker hub') {
 			steps {
 				withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerpwd')]) {
-					sh "docker login -u amiyaranjansahoo --password-stdin ${dockerpwd}"
+					sh "docker login -u amiyaranjansahoo -p ${dockerpwd}"
 					sh "docker push amiyaranjansahoo/dockerimg:v1"
 				}
 			}
