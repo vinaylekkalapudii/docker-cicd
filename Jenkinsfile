@@ -1,12 +1,13 @@
 pipeline {
 	agent any
 	tools {
-		echo "${getLatestCommitID()}"
+		
 		maven 'm3'
 	}
 	stages {
 		stage('Maven Build') {
 			steps {
+				echo "${getLatestCommitID()}"
 				sh 'mvn clean package'
 			}
 		}
