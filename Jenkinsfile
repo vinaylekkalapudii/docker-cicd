@@ -12,7 +12,7 @@ pipeline {
 		
 		stage('Docker Build image') {
 			steps {
-				sh 'docker build -t amiyaranjansahoo/dockerimg .'
+				sh 'docker build -t amiyaranjansahoo/dockerimg:v1 .'
 			}
 		}
 		
