@@ -12,7 +12,7 @@ pipeline {
 		
 		stage('Docker Build image') {
 			steps {
-				sh 'docker build -t amiyaranjansahoo/dockerimg:v1 .'
+				sh 'docker build -t amiyaranjansahoo/dockerimg .'
 			}
 		}
 		
@@ -27,7 +27,9 @@ pipeline {
 		
 		stage('Deploy to Dev server') {
 			steps {
-				echo "Code for deploying to Dev server"
+				sshagent(['linux-agent']) {
+    sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.33.15 docker container run -itd -p 8080:8080 --name amiya  amiyaranjansahoo/dockerimg"
+}
 			}
 		}
 		
