@@ -20,8 +20,8 @@ pipeline {
 		stage('Login to docker hub and Push the image') {
             steps {
 			 withCredentials([string(credentialsId: 'docker_password', variable: 'docker_pwd')]) {
-				docker login -u amiyaranjansahoo -p ${docker_pwd}
-				docker push amiyaranjansahoo/image1:v1
+				sh "docker login -u amiyaranjansahoo -p ${docker_pwd}"
+				sh "docker push amiyaranjansahoo/image1:v1"
 			}
                 
             }
