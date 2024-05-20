@@ -1,35 +1,38 @@
 pipeline {
     agent any
+	
 	tools {
-      maven 'mvn3'
+		maven 'mvn3'
     }
 
+
     stages {
-        stage('Build the source code') {
+        stage('Build using maven') {
             steps {
                 sh 'mvn clean package'
             }
         }
 		
-		stage('Build the docker image') {
+		stage('Build the image') {
             steps {
-                sh 'docker build . -t amiyaranjansahoo/image1:v1'
+                sh 'docker build -t amiyaranjansahoo/myimg:v1 .'
             }
         }
 		
-		stage('Login to docker hub and Push the image') {
+		stage('Upload to Docker hub') {
             steps {
-			 withCredentials([string(credentialsId: 'docker_password', variable: 'docker_pwd')]) {
-				sh "docker login -u amiyaranjansahoo -p ${docker_pwd}"
-				sh "docker push amiyaranjansahoo/image1:v1"
-			}
-                
+                withCredentials([string(credentialsId: 'dockerhub_passwd', variable: 'docker_passwd')]) {
+					sh "docker login -u amiyaranjansahoo -p ${docker_passwd}"
+					sh "docker push amiyaranjansahoo/myimg:v1"
+				}
             }
         }
 		
-		stage('Hello') {
+		stage('Deploy to dev remote server') {
             steps {
-                echo 'Hello World'
+                sshagent(['docker-dev']) {
+					sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.46.125 docker run -itd -p 8080:8080 --name mycontainer amiyaranjansahoo/myimg:v1"
+				}
             }
         }
     }
