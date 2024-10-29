@@ -1,38 +1,55 @@
 pipeline {
     agent any
-	
-	tools {
-		maven 'mvn3'
-    }
-
 
     stages {
-        stage('Build using maven') {
+        stage('Code Checkout') {
+            steps {
+                git branch: 'main', credentialsId: 'github', url: 'https://github.com/vinaylekkalapudii/docker-cicd'
+            }
+        }
+
+        stage('Maven Build') {
             steps {
                 sh 'mvn clean package'
             }
         }
-		
-		stage('Build the image') {
+
+        stage('Build Docker Image') {
             steps {
-                sh 'docker build -t amiyaranjansahoo/myimg:v1 .'
+                script {
+                    sh "docker build -t vinaylekkalapudii/dockerimg:v1 ."
+                }
             }
         }
-		
-		stage('Upload to Docker hub') {
+
+stage('Login to Docker Hub') {
             steps {
-                withCredentials([string(credentialsId: 'dockerhub_passwd', variable: 'docker_passwd')]) {
-					sh "docker login -u amiyaranjansahoo -p ${docker_passwd}"
-					sh "docker push amiyaranjansahoo/myimg:v1"
-				}
+                withCredentials([usernamePassword(credentialsId: 'dockerhub_creds', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    script {
+                        sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
+                    }
+                }
             }
         }
-		
-		stage('Deploy to dev remote server') {
+
+        stage('Push Docker Image') {
             steps {
-                sshagent(['docker-dev']) {
-					sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.46.125 docker run -itd -p 8080:8080 --name mycontainer amiyaranjansahoo/myimg:v1"
-				}
+                sh "docker push vinaylekkalapudii/dockerimg:v1"
+            }
+        }
+
+stage('Deploy to Local Server') {
+           steps {
+               script {
+                    // Stop and remove the existing container if it exists
+                    sh """
+                        docker stop mycontainer || true
+                        docker rm mycontainer || true
+                        
+                        // Run the new Docker container
+                        docker run -d -p 100:8080 --name mycontainer vinaylekkalapudii/dockerimg:v1
+                    """
+                }
             }
         }
     }
